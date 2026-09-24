@@ -50,14 +50,14 @@ namespace AIGames.EditorTools
             grid.gameObject.AddComponent<AStarPathfinder>();
             grid.gameObject.AddComponent<PathRequestManager>().requestsPerFrame = 4;
 
-            // Exercise 1: robot guards patrolling on A* paths.
-            AddEnemy("Robot Guard 1", "g", new Color(1f, 0.35f, 0.3f),
-                new[] { new Vector3(-12, 0, -12), new Vector3(-12, 0, 1), new Vector3(-4, 0, 1), new Vector3(-4, 0, -12) });
-            AddEnemy("Robot Guard 2", "h", new Color(0.7f, 0.45f, 1f),
-                new[] { new Vector3(4, 0, 12), new Vector3(12, 0, 12), new Vector3(11.5f, 0, 2), new Vector3(4, 0, 2) });
-
             // Exercise 2: ninja player moving to mouse clicks, follow camera.
             var player = AddPlayer(new Vector3(-13, 0, 12));
+
+            // Exercise 1: robot guards patrolling on A* paths (exercise 3: with a field of view).
+            AddEnemy("Robot Guard 1", "g", new Color(1f, 0.35f, 0.3f), player.transform,
+                new[] { new Vector3(-12, 0, -12), new Vector3(-12, 0, 1), new Vector3(-4, 0, 1), new Vector3(-4, 0, -12) });
+            AddEnemy("Robot Guard 2", "h", new Color(0.7f, 0.45f, 1f), player.transform,
+                new[] { new Vector3(4, 0, 12), new Vector3(12, 0, 12), new Vector3(11.5f, 0, 2), new Vector3(4, 0, 2) });
             var follow = Camera.main.gameObject.AddComponent<CameraFollow>();
             follow.target = player.transform;
             follow.SnapToTarget();
@@ -173,7 +173,7 @@ namespace AIGames.EditorTools
             return line;
         }
 
-        static EnemyAI AddEnemy(string name, string letter, Color color, Vector3[] points)
+        static EnemyAI AddEnemy(string name, string letter, Color color, Transform player, Vector3[] points)
         {
             var patrol = new GameObject($"{name} Patrol").AddComponent<PatrolPath>();
             patrol.gizmoColor = color;
@@ -188,6 +188,17 @@ namespace AIGames.EditorTools
             go.GetComponent<PathMover>().pathLine = AddPathLine(go.transform, color);
             var enemy = go.AddComponent<EnemyAI>();
             enemy.patrol = patrol;
+
+            var viewMesh = new GameObject("View Cone");
+            viewMesh.transform.SetParent(go.transform, false);
+            viewMesh.AddComponent<MeshFilter>();
+            var viewRenderer = viewMesh.AddComponent<MeshRenderer>();
+            viewRenderer.sharedMaterial = TransparentMat("GP_ViewCone", Color.white);
+            viewRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            var pov = go.AddComponent<PointOfView>();
+            pov.target = player;
+            pov.obstacleMask = 1 << UnwalkableLayer;
+            pov.viewMeshFilter = viewMesh.GetComponent<MeshFilter>();
             return enemy;
         }
 
