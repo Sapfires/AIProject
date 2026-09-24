@@ -15,6 +15,8 @@ namespace AIGames.Pathfinding
         public Color walkableColor = new Color(0.86f, 0.88f, 0.84f);
         public Color unwalkableColor = new Color(0.78f, 0.25f, 0.22f);
         public Color gridLineColor = new Color(0.70f, 0.72f, 0.68f);
+        [Tooltip("Colour of the most expensive walkable node (part 4 movement penalties).")]
+        public Color highPenaltyColor = new Color(0.42f, 0.33f, 0.24f);
 
         PathGrid grid;
         Texture2D texture;
@@ -44,7 +46,12 @@ namespace AIGames.Pathfinding
 
         protected virtual Color BaseColor(Node node)
         {
-            return node.walkable ? walkableColor : unwalkableColor;
+            if (!node.walkable)
+                return unwalkableColor;
+            if (grid.PenaltyMax <= grid.PenaltyMin)
+                return walkableColor;
+            float t = Mathf.InverseLerp(grid.PenaltyMin, grid.PenaltyMax, node.movementPenalty);
+            return Color.Lerp(walkableColor, highPenaltyColor, t);
         }
 
         public void PaintNodes(IEnumerable<Node> nodes, Color color)

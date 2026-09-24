@@ -10,6 +10,7 @@ namespace AIGames.Common
     public class DemoHUD : MonoBehaviour
     {
         static DemoHUD instance;
+        RectTransform panel;
         Text title;
         Text body;
 
@@ -19,6 +20,8 @@ namespace AIGames.Common
                 instance = Create();
             instance.title.text = heading;
             instance.body.text = text;
+            int lines = text.Split('\n').Length;
+            instance.panel.sizeDelta = new Vector2(470, 66 + lines * 25);
         }
 
         static DemoHUD Create()
@@ -39,7 +42,7 @@ namespace AIGames.Common
             var rt = (RectTransform)panel.transform;
             rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0, 1);
             rt.anchoredPosition = new Vector2(24, -24);
-            rt.sizeDelta = new Vector2(470, 150);
+            hud.panel = rt;
             panel.GetComponent<Image>().color = new Color(0, 0, 0, 0.6f);
 
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");

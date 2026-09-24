@@ -11,5 +11,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Pathfinding.unity
     guid: 8ca5f7af5ac74c140a8552e973e98108
+  - enabled: 1
+    path: Assets/Scenes/PathfindingUnits.unity
+    guid: 179ff2df2eeb07e43a0e8fbf7a890f6e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

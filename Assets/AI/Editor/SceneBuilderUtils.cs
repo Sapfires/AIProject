@@ -50,6 +50,22 @@ namespace AIGames.EditorTools
             return mat;
         }
 
+        /// <summary>Unlit transparent material (colour alpha controls the opacity).</summary>
+        public static Material TransparentMat(string name, Color color)
+        {
+            var mat = Mat(name, color, unlit: true);
+            mat.SetFloat("_Surface", 1);
+            mat.SetFloat("_Blend", 0);
+            mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetFloat("_ZWrite", 0);
+            mat.SetOverrideTag("RenderType", "Transparent");
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
         public static Camera AddCamera(Vector3 position, Vector3 euler, Color background)
         {
             var go = new GameObject("Main Camera") { tag = "MainCamera" };

@@ -9,6 +9,19 @@ namespace AIGames.EditorTools
     /// </summary>
     public static class CaptureUtil
     {
+        /// <summary>
+        /// Advances Play Mode by a fixed number of simulated seconds. The editor does not tick
+        /// the player loop while unfocused, so frames are stepped manually at a fixed rate.
+        /// </summary>
+        public static int Advance(float seconds, int fps = 30)
+        {
+            Time.captureFramerate = fps;
+            int frames = Mathf.RoundToInt(seconds * fps);
+            for (int i = 0; i < frames; i++)
+                UnityEditor.EditorApplication.Step();
+            return Time.frameCount;
+        }
+
         public static string Capture(string fileName, int width = 1600, int height = 900)
         {
             var cam = Camera.main;
