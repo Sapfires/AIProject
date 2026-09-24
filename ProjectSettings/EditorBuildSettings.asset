@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PathfinderGameplay.unity
     guid: d376c95f01fddb54992c23317394ac80
+  - enabled: 1
+    path: Assets/Scenes/Swarm.unity
+    guid: 218cee8cce71b6d468785de1685e9afc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
