@@ -56,7 +56,29 @@ namespace AIGames.EditorTools
             AddEnemy("Robot Guard 2", "h", new Color(0.7f, 0.45f, 1f),
                 new[] { new Vector3(4, 0, 12), new Vector3(12, 0, 12), new Vector3(11.5f, 0, 2), new Vector3(4, 0, 2) });
 
+            // Exercise 2: ninja player moving to mouse clicks, follow camera.
+            var player = AddPlayer(new Vector3(-13, 0, 12));
+            var follow = Camera.main.gameObject.AddComponent<CameraFollow>();
+            follow.target = player.transform;
+            follow.SnapToTarget();
+
             SaveScene(scene, ScenePath);
+        }
+
+        static PlayerController AddPlayer(Vector3 position)
+        {
+            var go = AddCharacter("Player", "r", position, PathfindingSceneBuilder.MudLayer + 1);
+            go.GetComponent<PathMover>().pathLine = AddPathLine(go.transform, new Color(0.3f, 0.95f, 0.5f));
+
+            var pointer = Primitive(PrimitiveType.Cylinder, "Click Pointer", position, new Vector3(0.8f, 0.02f, 0.8f),
+                Mat("GP_Pointer", new Color(0.3f, 0.95f, 0.5f), unlit: true));
+            Object.DestroyImmediate(pointer.GetComponent<Collider>());
+            pointer.AddComponent<ClickPointer>().player = go.transform;
+
+            var controller = go.AddComponent<PlayerController>();
+            controller.pointer = pointer.transform;
+            controller.floorMask = 1 << 0;
+            return controller;
         }
 
         static PathGrid BuildLevel()
