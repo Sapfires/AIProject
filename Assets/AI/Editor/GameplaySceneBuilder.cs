@@ -54,12 +54,22 @@ namespace AIGames.EditorTools
             var player = AddPlayer(new Vector3(-13, 0, 12));
 
             // Exercise 1: robot guards patrolling on A* paths (exercise 3: with a field of view).
-            AddEnemy("Robot Guard 1", "g", new Color(1f, 0.35f, 0.3f), player.transform,
+            var guard1 = AddEnemy("Robot Guard 1", "g",new Color(1f, 0.35f, 0.3f), player.transform,
                 new[] { new Vector3(-12, 0, -12), new Vector3(-12, 0, 1), new Vector3(-4, 0, 1), new Vector3(-4, 0, -12) });
-            AddEnemy("Robot Guard 2", "h", new Color(0.7f, 0.45f, 1f), player.transform,
+            var guard2 = AddEnemy("Robot Guard 2", "h",new Color(0.7f, 0.45f, 1f), player.transform,
                 new[] { new Vector3(4, 0, 12), new Vector3(12, 0, 12), new Vector3(11.5f, 0, 2), new Vector3(4, 0, 2) });
+            // Exercise 5 + own extension: reach the treasure without being caught.
+            var treasure = new GameObject("Treasure Chest").transform;
+            treasure.position = new Vector3(12, 0, -12);
+            Place(Load("chest"), treasure, treasure.position, Vector3.one * 1.6f).isStatic = false;
+            var manager = new GameObject("Gameplay Manager").AddComponent<GameplayManager>();
+            manager.player = player;
+            manager.treasure = treasure;
+            manager.guards = new[] { guard1, guard2 };
+
             var follow = Camera.main.gameObject.AddComponent<CameraFollow>();
             follow.target = player.transform;
+            follow.levelBounds = new Bounds(new Vector3(0, WallHeight / 2, 0), new Vector3(Half * 2, WallHeight, Half * 2));
             follow.SnapToTarget();
 
             SaveScene(scene, ScenePath);
