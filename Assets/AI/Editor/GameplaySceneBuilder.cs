@@ -199,6 +199,22 @@ namespace AIGames.EditorTools
             pov.target = player;
             pov.obstacleMask = 1 << UnwalkableLayer;
             pov.viewMeshFilter = viewMesh.GetComponent<MeshFilter>();
+            enemy.pointOfView = pov;
+
+            // Exercise 4: detection collider (trigger sphere) with a range ring on the floor.
+            const float detectionRadius = 2.2f;
+            var detectionGo = new GameObject("Detection Collider") { layer = go.layer };
+            detectionGo.transform.SetParent(go.transform, false);
+            var sphere = detectionGo.AddComponent<SphereCollider>();
+            sphere.radius = detectionRadius;
+            sphere.center = new Vector3(0, 0.9f, 0);
+            var ring = Primitive(PrimitiveType.Cylinder, "Range Ring", new Vector3(0, 0.02f, 0),
+                new Vector3(detectionRadius * 2, 0.005f, detectionRadius * 2), TransparentMat("GP_DetectionRing", Color.white), detectionGo.transform);
+            Object.DestroyImmediate(ring.GetComponent<Collider>());
+            ring.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            var detection = detectionGo.AddComponent<Detection>();
+            detection.rangeIndicator = ring.GetComponent<Renderer>();
+            enemy.detection = detection;
             return enemy;
         }
 
